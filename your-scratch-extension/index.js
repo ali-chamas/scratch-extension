@@ -82,7 +82,7 @@ class Scratch3YourExtension {
     myFirstBlock ({ MY_STRING }) {
         // example implementation to return a string
         console.log("hello");
-        return MY_STRING
+        return MY_STRING;
     }
 }
 
