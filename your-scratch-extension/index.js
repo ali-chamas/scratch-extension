@@ -1,7 +1,7 @@
 const BlockType = require('../../extension-support/block-type');
 const ArgumentType = require('../../extension-support/argument-type');
 const TargetType = require('../../extension-support/target-type');
-
+const logo = require('./images/logo.png')
 class Scratch3YourExtension {
 
     constructor (runtime) {
@@ -20,39 +20,32 @@ class Scratch3YourExtension {
             name: 'Demo',
 
             // colours to use for your extension blocks
-            color1: '#000099',
-            color2: '#660066',
+            color1: '#031C28',
+            color2: '#69F2FA',
 
             // icons to display
-            blockIconURI: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAAAAACyOJm3AAAAFklEQVQYV2P4DwMMEMgAI/+DEUIMBgAEWB7i7uidhAAAAABJRU5ErkJggg==',
-            menuIconURI: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAAAAACyOJm3AAAAFklEQVQYV2P4DwMMEMgAI/+DEUIMBgAEWB7i7uidhAAAAABJRU5ErkJggg==',
+            blockIconURI: logo,
+            menuIconURI: logo,
 
             // your Scratch blocks
             blocks: [
                 {
-                    // name of the function where your block code lives
+                    
                     opcode: 'myFirstBlock',
 
-                    // type of block - choose from:
-                    //   BlockType.REPORTER - returns a value, like "direction"
-                    //   BlockType.BOOLEAN - same as REPORTER but returns a true/false value
-                    //   BlockType.COMMAND - a normal command block, like "move {} steps"
-                    //   BlockType.HAT - starts a stack if its value changes from false to true ("edge triggered")
+                    
                     blockType: BlockType.REPORTER,
 
-                    // label to display on the block
-                    text: 'My first block and [MY_STRING]',
+                    
+                    text: 'Recognize this text [MY_STRING]',
 
-                    // true if this block should end a stack
+                    
                     terminal: false,
 
-                    // where this block should be available for code - choose from:
-                    //   TargetType.SPRITE - for code in sprites
-                    //   TargetType.STAGE  - for code on the stage / backdrop
-                    // remove one of these if this block doesn't apply to both
+                    
                     filter: [ TargetType.SPRITE, TargetType.STAGE ],
 
-                    // arguments used in the block
+                    
                     arguments: {
                         
                         MY_STRING: {
@@ -75,14 +68,47 @@ class Scratch3YourExtension {
     }
 
 
-    /**
-     * implementation of the block with the opcode that matches this name
-     *  this will be called when the block is used
-     */
+    
     myFirstBlock ({ MY_STRING }) {
-        // example implementation to return a string
-        console.log("hello");
-        return MY_STRING;
+
+        
+        const queryString = window.location.search;
+
+        const params = new URLSearchParams(queryString);
+    
+        const modelUrl = params.get("url");
+        const token = params.get("token");
+        console.log(token);
+        console.log(modelUrl);
+        const apiUrl = "http://localhost:8000";
+        const reqBody = { example: MY_STRING, modelUrl: modelUrl };
+       
+            
+           return fetch(`${apiUrl}/user/test_model`, {
+             method: "POST",
+             headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`, 
+             },
+             body: JSON.stringify(reqBody),
+           })
+             .then((res) => {return res.json()})
+             .then((data) => {
+               const labels = Object.keys(data.result);
+               const probabilities = Object.values(data.result);
+       
+               const highestIndex = probabilities.indexOf(Math.max(...probabilities));
+       
+               const highestLabel = labels[highestIndex];
+       
+               console.log(highestLabel) ;
+               console.log(data);
+               return highestLabel
+            });
+        
+        
+        
+        
     }
 }
 
