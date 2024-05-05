@@ -1,7 +1,7 @@
 const BlockType = require('../../extension-support/block-type');
 const ArgumentType = require('../../extension-support/argument-type');
 const TargetType = require('../../extension-support/target-type');
-const logo = require('./images/logo.png')
+
 class Scratch3YourExtension {
 
     constructor (runtime) {
@@ -24,8 +24,8 @@ class Scratch3YourExtension {
             color2: '#69F2FA',
 
             // icons to display
-            blockIconURI: logo,
-            menuIconURI: logo,
+            blockIconURI: 'http://localhost:8000/logo/logo.png',
+            menuIconURI: 'http://localhost:8000/logo/logo.png',
 
             // your Scratch blocks
             blocks: [
@@ -70,16 +70,15 @@ class Scratch3YourExtension {
 
     
     myFirstBlock ({ MY_STRING }) {
-
+        
         
         const queryString = window.location.search;
-
         const params = new URLSearchParams(queryString);
     
         const modelUrl = params.get("url");
         const token = params.get("token");
-        console.log(token);
-        console.log(modelUrl);
+
+        
         const apiUrl = "http://localhost:8000";
         const reqBody = { example: MY_STRING, modelUrl: modelUrl };
        
@@ -101,8 +100,7 @@ class Scratch3YourExtension {
        
                const highestLabel = labels[highestIndex];
        
-               console.log(highestLabel) ;
-               console.log(data);
+               
                return highestLabel
             });
         
